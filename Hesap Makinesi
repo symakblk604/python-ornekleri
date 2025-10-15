@@ -1,4 +1,3 @@
-from os import write
 # HESAP MAKİNESİ UYGULAMASI
 import datetime
 import pytz
