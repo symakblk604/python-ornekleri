@@ -1,3 +1,4 @@
+from os import write
 # HESAP MAKİNESİ UYGULAMASI
 import datetime
 import pytz
@@ -26,20 +27,17 @@ def bolme(sayi1,sayi2):
 # DOSYA
 def dosyaya_yaz(sayi1,operator,sayi2,sonuc):
   with open("hesap_gecmisi.txt","a") as dosya:
-    locals_tz = pytz.time.timezone("Europe/Istanbul")
-    zaman = datetime.datetime.now(locals_tz)
+    locals_tz = pytz.timezone("Europe/Istanbul")
+    zaman = datetime.datetime.now(locals_tz).strftime("%Y-%m-%d  %H:%M:%S")
     dosya.write(f"{zaman} - {sayi1} {operator} {sayi2} = {sonuc}\n")
 
 
 def dosyadan_oku():
-  try:
     with open("hesap_gecmisi.txt","r") as dosya:
       gecmis = dosya.read()
       print("--- HESAP GEÇMİŞİ ---")
       print(gecmis)
-  except FileNotFoundError:
-    print("Hesap geçmişi dosyası bulunamadı.")
-
+ 
 
 # ANA MENÜ
 def hesap_makinesi():
