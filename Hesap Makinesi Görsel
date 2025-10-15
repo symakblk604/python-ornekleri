@@ -1,0 +1,120 @@
+# HESAP MAKİNESİ (Gradio + Colab + Renkli & Sembollü Butonlar)
+
+import datetime
+import pytz
+import gradio as gr
+import os
+
+# ----------------- ORİJİNAL FONKSİYONLAR -----------------
+def topla(sayi1,sayi2):
+    return sayi1 + sayi2
+
+def cıkar(sayi1,sayi2):
+    return sayi1 - sayi2
+
+def carp(sayi1,sayi2):
+    return sayi1 * sayi2
+
+def bolme(sayi1,sayi2):
+    if sayi2 == 0:
+        return "Bir sayı sıfıra bölünemez"
+    else:
+        return sayi1 / sayi2
+
+def dosyaya_yaz(sayi1,operator,sayi2,sonuc):
+    with open("hesap_gecmisi.txt","a") as dosya:
+        locals_tz = pytz.timezone("Europe/Istanbul")
+        zaman = datetime.datetime.now(locals_tz).strftime("%Y-%m-%d %H:%M:%S")
+        dosya.write(f"{zaman} - {sayi1} {operator} {sayi2} = {sonuc}\n")
+
+def dosyadan_oku():
+    if os.path.exists("hesap_gecmisi.txt"):
+        with open("hesap_gecmisi.txt","r") as dosya:
+            gecmis = dosya.read()
+            if gecmis.strip() == "":
+                return "Henüz kaydedilmiş işlem yok."
+            return "--- HESAP GEÇMİŞİ ---\n" + gecmis
+    else:
+        return "Henüz kaydedilmiş işlem yok."
+
+# ----------------- HESAPLA FONKSİYONU -----------------
+def hesapla(sayi1, sayi2, operator):
+    try:
+        sayi1 = float(sayi1)
+        sayi2 = float(sayi2)
+    except:
+        return "Hata: Geçersiz giriş!", dosyadan_oku()
+    
+    if operator == '+':
+        sonuc = topla(sayi1, sayi2)
+    elif operator == '-':
+        sonuc = cıkar(sayi1, sayi2)
+    elif operator == '*':
+        sonuc = carp(sayi1, sayi2)
+    elif operator == '/':
+        sonuc = bolme(sayi1, sayi2)
+    else:
+        return "Hata: Geçersiz işlem!", dosyadan_oku()
+    
+    dosyaya_yaz(sayi1, operator, sayi2, sonuc)
+    gecmis = dosyadan_oku()
+    return sonuc, gecmis
+
+# ----------------- ÇIKIŞ FONKSİYONU -----------------
+def cikis():
+    return "İşlem sonlandı. Tarayıcıyı kapatabilirsiniz.", dosyadan_oku()
+
+# ----------------- KAYITLARI TEMİZLE FONKSİYONU -----------------
+def kayitlari_temizle():
+    if os.path.exists("hesap_gecmisi.txt"):
+        os.remove("hesap_gecmisi.txt")
+    return "", "Kayıtlar temizlendi."
+
+# ----------------- GRADIO ARAYÜZÜ -----------------
+with gr.Blocks() as demo:
+    gr.HTML("""
+    <style>
+    #btn_topla {background-color:#4CAF50; color:white; font-weight:bold;}
+    #btn_cikis {background-color:#f44336; color:white; font-weight:bold;}
+    #btn_temizle {background-color:#FF9800; color:white; font-weight:bold;}
+    </style>
+    """)
+    
+    gr.Markdown("## 🧮 Hesap Makinesi (Gradio + Colab)")
+
+    with gr.Row():
+        sayi1 = gr.Textbox(label="Sayı 1")
+        sayi2 = gr.Textbox(label="Sayı 2")
+        operator = gr.Dropdown(choices=['+','-','*','/'], label="İşlem", value='+')
+
+    with gr.Row():
+        hesapla_buton = gr.Button("➕ Topla", elem_id="btn_topla")
+        cikis_buton = gr.Button("❌ Çıkış", elem_id="btn_cikis")
+        temizle_buton = gr.Button("🗑️ Kayıtları Temizle", elem_id="btn_temizle")
+
+    sonuc_text = gr.Textbox(label="Sonuç")
+    gecmis_text = gr.Textbox(label="Hesap Geçmişi", lines=10)
+    # ----------------- BUTON YAZISINI OTOMATİK GÜNCELLE -----------------
+    def buton_yazi_guncelle(operator_secimi):
+        if operator_secimi == '+':
+            return gr.update(value="➕ Topla")
+        elif operator_secimi == '-':
+            return gr.update(value="➖ Çıkar")
+        elif operator_secimi == '*':
+            return gr.update(value="✖ Çarp")
+        elif operator_secimi == '/':
+            return gr.update(value="➗ Böl")
+        else:
+            return gr.update(value="Hesapla")
+
+    operator.change(
+        fn=buton_yazi_guncelle,
+        inputs=[operator],
+        outputs=[hesapla_buton])
+
+    # Butonlara fonksiyon bağlama
+    hesapla_buton.click(hesapla, inputs=[sayi1, sayi2, operator], outputs=[sonuc_text, gecmis_text])
+    cikis_buton.click(cikis, outputs=[sonuc_text, gecmis_text])
+    temizle_buton.click(kayitlari_temizle, outputs=[sonuc_text, gecmis_text])
+
+demo.launch(share=True, prevent_thread_lock=True)
