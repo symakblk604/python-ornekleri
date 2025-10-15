@@ -1,0 +1,107 @@
+from os import write
+# HESAP MAKİNESİ UYGULAMASI
+import datetime
+import pytz
+
+# Fonksiyonlar: Toplama,Çıkarma,Bölme,Çarpma
+
+#Toplama
+def topla(sayi1,sayi2):
+  return sayi1 + sayi2
+
+#Çıkarma
+def cıkar(sayi1,sayi2):
+  return sayi1 - sayi2
+
+#Çarpma
+def carp(sayi1,sayi2):
+  return sayi1 * sayi2
+
+#Bölme
+def bolme(sayi1,sayi2):
+  if sayi2 == 0:
+    return "Bir sayı sıfıra bölünemez"
+  else:
+    return sayi1 / sayi2
+
+# DOSYA
+def dosyaya_yaz(sayi1,operator,sayi2,sonuc):
+  with open("hesap_gecmisi.txt","a") as dosya:
+    locals_tz = pytz.time.timezone("Europe/Istanbul")
+    zaman = datetime.datetime.now(locals_tz)
+    dosya.write(f"{zaman} - {sayi1} {operator} {sayi2} = {sonuc}\n")
+
+
+def dosyadan_oku():
+  try:
+    with open("hesap_gecmisi.txt","r") as dosya:
+      gecmis = dosya.read()
+      print("--- HESAP GEÇMİŞİ ---")
+      print(gecmis)
+  except FileNotFoundError:
+    print("Hesap geçmişi dosyası bulunamadı.")
+
+
+# ANA MENÜ
+def hesap_makinesi():
+  while  True:
+    print("\nHesap Makinesi Uygulamsına Hoşgeldiniz!")
+    print("Yapmak istediğiniz işlemi seçiniz:")
+    print("1.Toplama")
+    print("2.Çıkarma")
+    print("3.Çarpma")
+    print("4.Bölme")
+    print("5.Hesap özeti göster")
+    print("6.Çıkış")
+
+    secim = input("Seçiminiz:(1/2/3/4/5/6):")
+
+    if secim == '6':
+      print(" Programdan çıkılıyor.")
+      break
+
+    elif secim == '5':
+      dosyadan_oku()
+
+
+    elif secim in ['1','2','3','4']:
+      try:
+        sayi1 =float(input("Birinci sayıyı giriniz:"))
+        sayi2 =float(input("İkinci sayıyı giriniz:"))
+
+      except Exception as e:
+        print(f"Hata türü:{type(e).__name__}")
+        print(f"Hata mesajı:{e}")
+        print(f"Geçersiz girdi. Lütfen sayı giriniz.")
+        continue
+
+
+      if secim == '1':
+        sonuc= topla(sayi1,sayi2)
+        print("Sonuç:",sonuc)
+        operator = '+'
+        dosyaya_yaz(sayi1,operator,sayi2,sonuc)
+
+
+      elif secim == '2':
+        sonuc= cıkar(sayi1,sayi2)
+        print("Sonuç:",sonuc)
+        operator = '-'
+        dosyaya_yaz(sayi1,operator,sayi2,sonuc)
+
+      elif secim == '3':
+        sonuc= carp(sayi1,sayi2)
+        print("Sonuç:",sonuc)
+        operator = '*'
+        dosyaya_yaz(sayi1,operator,sayi2,sonuc)
+
+      elif secim == '4':
+        sonuc= bolme(sayi1,sayi2)
+        print("Sonuç:",sonuc)
+        operator = '/'
+        dosyaya_yaz(sayi1,operator,sayi2,sonuc)
+    else:
+      print("Geçersiz seçim. Lütfen 1,2,3,4,5 veya 6 giriniz.")
+
+
+hesap_makinesi()
