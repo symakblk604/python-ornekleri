@@ -1,0 +1,80 @@
+hesap ={
+    "ad":"sadık turan",
+    "hesapno": "16375698",
+    "bakiye": 2000,
+    "ekhesap": 1000 
+    }
+
+def paracek(hesap, miktar):
+    print(f"merhaba {hesap['ad']}")
+    if hesap["bakiye"] >= miktar:
+        hesap["bakiye"] -= miktar
+        print("paranizi alabilirsiniz.")
+        
+    else:
+        toplam = hesap["bakiye"] + hesap["ekhesap"]
+        if toplam >= miktar:
+            ekhesapkullanimi = input("en hesabi kullanmak isityor musun?(e/h):").lower()
+            if ekhesapkullanimi == "e":
+                kullanilan_ekhesap = miktar - hesap["bakiye"]
+                hesap["ekhesap"] -= kullanilan_ekhesap
+                hesap["bakiye"] = 0
+                print("paranizi alabilirsiniz.")
+                
+            else:
+                print(f'{hesap["hesapno"]} nolu hesabinizda {hesap["bakiye"]} bulunmaktadir.')
+                
+                
+        else:
+            print("üzgünüz bakiye yetersiz.")
+
+
+def bakiyesorgulama(hesap):
+    print(f"{hesap['hesapno']} nolu hesabinizda {hesap['bakiye']} TL bulunmaktadir. Ek hesap limitini ise {hesap['ekhesap']} TL bulunmaktadir.")
+    
+    
+
+def parayatir(hesap,miktar):
+    print(f"merhaba {hesap['ad']}")
+    if miktar <= 0:
+        print("Lütfen geçerli bir miktar girin!")
+        return
+    hesap["bakiye"] += miktar
+    print(f"{miktar} TL yatırıldı. Yeni bakiyeniz: {hesap['bakiye']} TL")
+    
+                        
+
+while True:
+    print("""
+    1- Para Çek
+    2- Bakiye Sorgula
+    3- Para Yatır
+    4- Çıkış
+    """)
+
+    secim = input("Seciminiz: ")
+    
+    if secim== "1":
+        
+        try:
+            miktar = int(input("Çekmek istediğiniz miktar: "))
+            paracek(hesap, miktar)
+        except ValueError:
+            print("Lütfen geçerli bir sayı giriniz!")
+    elif secim == "2":
+        bakiyesorgulama(hesap)
+    
+    elif secim == "3":
+        try:
+            miktar = int(input("Yatırmak istediğiniz miktar: "))
+            parayatir(hesap, miktar)
+        except ValueError:
+            print("Lütfen geçerli bir sayı giriniz!")
+        
+    elif secim == "4":
+        print("ATM'den çıkılıyor. Hoşçakalın!")
+        break
+    else:
+        print("Geçersiz seçim, lütfen 1-4 arasında bir seçim yapın.")
+
+
