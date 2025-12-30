@@ -1,0 +1,66 @@
+
+import random
+
+tur = 1
+max_tur = 5
+
+oyuncu_kazanma = 0
+bilgisayar_kazanma = 0
+secenekler = ["tas","kagit","makas"]
+
+while tur <= max_tur:
+    print(f"\n {tur}. TUR")
+ 
+   
+    while True: 
+        oyuncu = input("tas/ kagit/ makas:").lower()
+        bilgisayar = random.choice(secenekler)
+        if oyuncu not in secenekler:
+            print(" Hatalı giriş")
+            continue
+        
+        print("Bilgisayar:", bilgisayar)
+        
+        if oyuncu == bilgisayar:
+            print("berabere")
+            continue
+            
+        elif oyuncu =="kagit" and bilgisayar == "tas":
+            print("kazandin.")
+            oyuncu_kazanma += 1
+            break
+            
+            
+        elif oyuncu =="makas" and bilgisayar == "kagit":
+            print("kazandin.")
+            oyuncu_kazanma += 1
+            break
+            
+            
+            
+        elif oyuncu =="tas" and bilgisayar == "makas":
+            print("kazandin.")
+            oyuncu_kazanma += 1
+            break
+            
+            
+        else:
+            print("kaybettiniz.")
+            bilgisayar_kazanma += 1
+            break
+
+    
+    tur += 1
+
+# OYUN SONUCU
+print("\n OYUN BİTTİ")
+print("Sen:", oyuncu_kazanma)
+print("Bilgisayar:", bilgisayar_kazanma)
+
+if oyuncu_kazanma > bilgisayar_kazanma:
+    print("GENEL KAZANAN: SEN")
+elif bilgisayar_kazanma > oyuncu_kazanma:
+    print("GENEL KAZANAN: BİLGİSAYAR")
+else:
+    print("🤝 OYUN BERABERE")
+
