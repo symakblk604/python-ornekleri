@@ -1,0 +1,50 @@
+#Sayı Tahmin Oyunu (Rehberli)
+#Bilgisayar 1–10 arasında rastgele bir sayı tutsun, kullanıcı tahmin etsin.
+
+import random 
+import time
+
+baslangic_zamani = time.time()
+sayi= random.randint(1,10)
+hak = 5
+skor = 0
+tahmin = None
+
+while  hak>0:
+    if time.time() - baslangic_zamani > 10:
+        print("Süre doldu!")
+        break 
+    
+    tahmin = int(input("1-10 arasında bir sayı tahmin et: "))
+   
+    # ARALIK DIŞI KONTROL
+    if tahmin < 1 or tahmin > 10:
+        print("Lütfen 1 ile 10 arasında bir sayı gir!")
+        continue   # döngünün başına dön, haktan düşme
+
+    if tahmin < sayi:
+        hak -=1
+        if hak > 0:
+           skor-=2
+           print("Kalan hak:", hak)
+           print("Daha büyük bir sayı söyle.")
+           print("Skorun:", skor)
+        
+    elif tahmin > sayi:
+        hak -=1
+        if hak > 0:
+            skor-=2
+            print("Kalan hak:", hak)
+            print("Daha küçük bir sayı söyle.")
+            print("Skorun:", skor)
+    else:
+        skor+=10
+        print("Tebrikler! Doğru tahmin ettin.")
+        print("Skorun:", skor)
+        break
+    
+    
+if hak == 0:
+    print("Hakkın kalmadı.Kaybettin. Sayı:", sayi)
+    print("Skorun:", skor)
+
